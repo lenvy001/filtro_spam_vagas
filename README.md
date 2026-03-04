@@ -5,6 +5,8 @@ Projeto em C# para:
 - classificar por regras configuráveis em `regras.json`,
 - aplicar marcador no e-mail conforme a classificação.
 
+O processamento roda em modo contínuo (loop de serviço), ideal para execução 24/7.
+
 ## Stack
 
 - .NET 10 (`net10.0`)
@@ -13,7 +15,8 @@ Projeto em C# para:
 
 ## Estrutura
 
-- `email.cs` -> leitura IMAP, classificação por score e aplicação de marcador.
+- `Program.cs` -> loop contínuo de processamento (24/7).
+- `email.cs` -> modelos, classificação por score e operações IMAP.
 - `regras.json` -> palavras-chave, remetentes, pesos e limiares.
 - `MeuPrimeiroCSharp.csproj` -> projeto e dependências.
 
@@ -65,6 +68,7 @@ Opcionais:
 - `IMAP_MAILBOX` (default: `INBOX`)
 - `IMAP_LIMIT` (default: `10`)
 - `IMAP_APLICAR_MARCADOR` (`1` para sim, `0` para não; default `1`)
+- `WORKER_INTERVAL_SECONDS` (intervalo entre ciclos; default `60`, mínimo `5`)
 
 ## Executar localmente
 
