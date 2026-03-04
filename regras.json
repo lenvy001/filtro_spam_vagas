@@ -1,0 +1,82 @@
+{
+  "limiarClassificacao": 1.8,
+  "diferencaMinimaEntreClasses": 0.5,
+  "pesos": {
+    "assunto": 2.5,
+    "corpo": 1.2,
+    "remetente": 2.0
+  },
+  "palavrasChaveRuido": [
+    "newsletter de vagas",
+    "novas vagas",
+    "alerta de vagas",
+    "vagas recomendadas",
+    "vagas abertas",
+    "jobalert",
+    "linkedin jobs",
+    "indeed alert",
+    "glassdoor alert",
+    "vagas para você"
+  ],
+  "palavrasChavePrioridade": [
+    "agendar entrevista",
+    "entrevista",
+    "entrevista técnica",
+    "entrevista final",
+    "teste técnico",
+    "teste tecnico",
+    "feedback",
+    "processo seletivo",
+    "retorno do processo",
+    "resultado da entrevista",
+    "oferta",
+    "proposta",
+    "aprovado",
+    "reprovado",
+    "retorno",
+    "proxima etapa",
+    "dinamica online",
+    "pre selecionado",
+    "pré selecionado",
+    "selecionado",
+    "confirme sua disponibilidade"
+  ],
+  "palavrasChaveCandidatura": [
+    "candidatura recebida",
+    "confirmamos sua candidatura",
+    "obrigado por se candidatar",
+    "inscrição recebida",
+    "inscricao recebida",
+    "currículo recebido",
+    "curriculo recebido",
+    "aplicação recebida",
+    "aplicacao recebida",
+    "sua inscrição foi recebida",
+    "candidatura",
+    "inscrição",
+    "enviar curriculo",
+    "curriculo cadastrado",
+    "candidatar"
+  ],
+  "remetentesRuido": [
+    "@linkedin.com",
+    "@indeed.com",
+    "@glassdoor.com",
+    "@catho.com.br",
+    
+    "newsletter"
+  ],
+  "remetentesPrioridade": [
+    "talentos@",
+    "rh@",
+    "selecao@",
+    "jobs@",
+    "recruiting@"
+  ],
+  "remetentesCandidatura": [
+    "@gupy",
+    "@vagas.com.br",
+    "@trampos",
+    "carreiras@"
+  ]
+}
