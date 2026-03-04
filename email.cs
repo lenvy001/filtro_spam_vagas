@@ -8,70 +8,12 @@ using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit.Security;
-using Emailcs;
-
-class Program
-{
-    static void Main(string[] args)
-    {
-        List<Email> emails;
-
-        try
-        {
-            emails = LeitorImapMailKit.LerUltimosEmails();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Falha ao ler e-mails do Gmail via IMAP: {ex.Message}");
-            return;
-        }
-
-        foreach (var e in emails)
-        {
-            Console.WriteLine($"Remetente: {e.Remetente}");
-            Console.WriteLine($"Assunto: {e.Assunto}");
-            Console.WriteLine($"Corpo: {e.Corpo}");
-            Console.WriteLine($"Data de Envio: {e.DataEnvio}");
-            Console.WriteLine();
-        }
-        var filtro = new FiltroEmail();
-        foreach (var email in emails)
-        {
-            var resultado = filtro.Classificar(email);
-            Console.WriteLine($"Email do remetente: {email.Remetente}");
-            Console.WriteLine($"Classificação: {resultado.Classificacao}");
-            Console.WriteLine($"Scores -> Alerta: {resultado.ScoreRuido:F1}, Prioridade: {resultado.ScorePrioridade:F1}, Candidatura: {resultado.ScoreCandidatura:F1}");
-            Console.WriteLine($"Hits Prioridade: {string.Join(", ", resultado.PalavrasEncontradasPrioridade)}");
-            Console.WriteLine($"Hits Candidatura: {string.Join(", ", resultado.PalavrasEncontradasCandidatura)}");
-            Console.WriteLine($"Hits Alerta: {string.Join(", ", resultado.PalavrasEncontradasRuido)}");
-            Console.WriteLine($"Remetente Hits Prioridade: {string.Join(", ", resultado.RemetentesEncontradosPrioridade)}");
-            Console.WriteLine($"Remetente Hits Candidatura: {string.Join(", ", resultado.RemetentesEncontradosCandidatura)}");
-            Console.WriteLine($"Remetente Hits Alerta: {string.Join(", ", resultado.RemetentesEncontradosRuido)}");
-
-            try
-            {
-                var aplicouMarcador = LeitorImapMailKit.AplicarMarcador(email, resultado.Classificacao);
-                if (aplicouMarcador)
-                {
-                    Console.WriteLine("Marcador aplicado com sucesso.");
-                }
-                else
-                {
-                    Console.WriteLine("Marcador não aplicado (classe 'outros' ou configuração desativada).");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Não foi possível aplicar marcador: {ex.Message}");
-            }
-
-            Console.WriteLine();
-        }
-    }
-}
 
 namespace Emailcs
 {
+    /// <summary>
+    /// Representa um e-mail lido via IMAP com os campos usados na classificação.
+    /// </summary>
     public class Email
     {
         public string Remetente { get; set; } = string.Empty;
@@ -81,6 +23,16 @@ namespace Emailcs
         public uint ImapUid { get; set; }
     }
 
+    /// <summary>
+    /// Classifica e-mails em categorias com base em regras configuradas no arquivo <c>regras.json</c>.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// var filtro = new FiltroEmail();
+    /// var resultado = filtro.Classificar(email);
+    /// Console.WriteLine(resultado.Classificacao);
+    /// </code>
+    /// </example>
     public class FiltroEmail
     {
         private readonly RegrasFiltro regras;
@@ -90,6 +42,11 @@ namespace Emailcs
             regras = CarregarRegras();
         }
 
+        /// <summary>
+        /// Classifica um e-mail em <c>prioridade</c>, <c>candidatura</c>, <c>alerta de vaga</c> ou <c>outros</c>.
+        /// </summary>
+        /// <param name="email">E-mail a ser classificado.</param>
+        /// <returns>Resultado completo com score, hits e classe final.</returns>
         public ResultadoFiltro Classificar(Email email)
         {
             var resultado = new ResultadoFiltro
@@ -303,6 +260,9 @@ namespace Emailcs
         }
     }
 
+    /// <summary>
+    /// Regras de classificação carregadas de configuração externa.
+    /// </summary>
     public class RegrasFiltro
     {
         public List<string> PalavrasChaveRuido { get; set; } = new List<string>();
@@ -316,6 +276,9 @@ namespace Emailcs
         public PesosFiltro Pesos { get; set; } = new PesosFiltro();
     }
 
+    /// <summary>
+    /// Pesos aplicados no cálculo de score por campo do e-mail.
+    /// </summary>
     public class PesosFiltro
     {
         public double Assunto { get; set; } = 2.5;
@@ -323,6 +286,9 @@ namespace Emailcs
         public double Remetente { get; set; } = 2.0;
     }
 
+    /// <summary>
+    /// Resultado produzido pela classificação de um e-mail.
+    /// </summary>
     public class ResultadoFiltro
     {
         public List<string> PalavrasChaveRuido { get; set; } = new List<string>();
@@ -340,8 +306,15 @@ namespace Emailcs
         public List<string> RemetentesEncontradosCandidatura { get; set; } = new List<string>();
     }
 
+    /// <summary>
+    /// Operações de leitura IMAP e aplicação de marcador no servidor de e-mail.
+    /// </summary>
     public static class LeitorImapMailKit
     {
+        /// <summary>
+        /// Lê os últimos e-mails da mailbox configurada nas variáveis de ambiente IMAP.
+        /// </summary>
+        /// <returns>Lista de e-mails com UID e metadados para classificação.</returns>
         public static List<Email> LerUltimosEmails()
         {
             var host = Environment.GetEnvironmentVariable("IMAP_HOST") ?? "imap.gmail.com";
@@ -384,6 +357,12 @@ namespace Emailcs
             return emails;
         }
 
+        /// <summary>
+        /// Aplica marcador no e-mail conforme a classificação informada.
+        /// </summary>
+        /// <param name="email">E-mail com UID válido no servidor IMAP.</param>
+        /// <param name="classificacao">Classe calculada pelo filtro.</param>
+        /// <returns><c>true</c> quando o marcador é aplicado; caso contrário <c>false</c>.</returns>
         public static bool AplicarMarcador(Email email, string classificacao)
         {
             if (email.ImapUid == 0)
